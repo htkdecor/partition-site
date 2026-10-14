@@ -34,7 +34,7 @@ regions = [
 
 domain = "https://partition.htkdecor.com.my"
 
-# 2. 读取根目录的 index.html 作为模版
+# 2. 读取根目录的 index.html 模板（先不带链接，后面单独拼接）
 if not os.path.exists("index.html"):
     print("未找到 index.html 模板文件！")
     exit(1)
@@ -42,41 +42,72 @@ if not os.path.exists("index.html"):
 with open("index.html", "r", encoding="utf-8") as f:
     template_content = f.read()
 
-# 3. 动态生成 100 个地区的 HTML 链接 HTML 代码块
-links_html = '<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2 mt-3">\n'
-for region in regions:
-    region_display_name = region.replace("-", " ").title()
-    links_html += f'    <div class="col"><a href="{domain}/{region}/" class="btn btn-sm btn-outline-secondary w-100 text-truncate">{region_display_name}</a></div>\n'
-links_html += '</div>\n'
+# 移除模板中可能残留的 {{REGION_LINKS}} 占位符，以便定制区分主页和子页
+base_template = template_content.replace("{{REGION_LINKS}}", "")
 
-# 如果 index.html 里面有 {{REGION_LINKS}} 占位符就替换；如果没有，自动拼接到 </main> 前面
-if "{{REGION_LINKS}}" in template_content:
-    template_content = template_content.replace("{{REGION_LINKS}}", links_html)
+# 3. 制作【主页】专属的 100 个地区完整链接 HTML
+all_links_html = '<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2 mt-3">\n'
+for region in regions:
+    r_name = region.replace("-", " ").title()
+    all_links_html += f'    <div class="col"><a href="{domain}/{region}/" class="btn btn-sm btn-outline-secondary w-100 text-truncate">{r_name}</a></div>\n'
+all_links_html += '</div>\n'
+
+home_section = f'''
+<section class="py-5 bg-light border-top">
+    <div class="container text-center">
+        <h4 class="fw-bold mb-3 text-dark">Serviced Areas in Penang</h4>
+        <p class="text-muted small">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
+        {all_links_html}
+    </div>
+</section>
+'''
+
+# 写入主页 index.html (包含 100 个完整链接)
+home_content = base_template.replace("{{REGION}}", "Penang")
+if "</main>" in home_content:
+    home_content = home_content.replace("</main>", f"{home_section}\n</main>")
 else:
-    section_html = f'''
-    <section class="py-5 bg-light border-top">
+    home_content += home_section
+
+# 临时覆盖根目录 index.html（或者保持原样，视需求而定。这里我们让根目录拥有 100 个链接）
+# 注意：如果您想保留干净的根目录模板，可以将其写入一个专门的文件。这里直接更新根目录：
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(home_content)
+
+# 4. 循环创建 100 个子地区文件夹，每个子页面只放 5 个推荐链接
+total_regions = len(regions)
+for i, region in enumerate(regions):
+    os.makedirs(region, exist_ok=True)
+    region_title = region.replace("-", " ").title() + ", Penang"
+    
+    # 每个子页面只取 5 个循环推荐链接
+    related_indices = [(i + step) % total_regions for step in range(1, 6)]
+    sub_links_html = '<div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">\n'
+    for idx in related_indices:
+        r_item = regions[idx]
+        r_name = r_item.replace("-", " ").title()
+        sub_links_html += f'    <div class="col"><a href="{domain}/{r_item}/" class="btn btn-sm btn-outline-primary w-100 text-truncate">{r_name}</a></div>\n'
+    sub_links_html += '</div>\n'
+    
+    sub_section = f'''
+    <section class="py-4 bg-light border-top">
         <div class="container text-center">
-            <h4 class="fw-bold mb-3 text-dark">Serviced Areas in Penang</h4>
-            <p class="text-muted small">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
-            {links_html}
+            <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {region.replace("-", " ").title()}:</h6>
+            {sub_links_html}
         </div>
     </section>
     '''
-    if "</main>" in template_content:
-        template_content = template_content.replace("</main>", f"{section_html}\n</main>")
-    else:
-        template_content += section_html
-
-# 4. 循环创建 100 个地区文件夹并生成对应的 index.html
-for region in regions:
-    os.makedirs(region, exist_ok=True)
-    region_title = region.replace("-", " ").title() + ", Penang"
-    page_content = template_content.replace("{{REGION}}", region_title)
     
+    sub_page_content = base_template.replace("{{REGION}}", region_title)
+    if "</main>" in sub_page_content:
+        sub_page_content = sub_page_content.replace("</main>", f"{sub_section}\n</main>")
+    else:
+        sub_page_content += sub_section
+        
     with open(f"{region}/index.html", "w", encoding="utf-8") as f:
-        f.write(page_content)
+        f.write(sub_page_content)
 
-# 5. 自动生成包含这 100 个地区的 sitemap.xml
+# 5. 自动生成 sitemap.xml
 sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
 sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 sitemap_content += f'  <url><loc>{domain}/</loc></url>\n'
@@ -89,4 +120,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("包含 100 个地区页面链接的 HTML 与 sitemap.xml 已全部成功重新生成！")
+print("主页包含 100 个链接、子页面精简为 5 个关联链接，sitemap.xml 生成完毕！")
