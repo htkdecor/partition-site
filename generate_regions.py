@@ -90,4 +90,3 @@ with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
 print("包含 100 个地区页面链接的 HTML 与 sitemap.xml 已全部成功重新生成！")
-
