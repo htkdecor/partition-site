@@ -34,15 +34,15 @@ regions = [
 
 domain = "https://partition.htkdecor.com.my"
 
-# 2. 读取根目录的 index.html 模板（先不带链接，后面单独拼接）
+# 2. 读取根目录的 index.html 模板
 if not os.path.exists("index.html"):
-    print("未找到 index.html 模板文件！")
+    print("未找到 index.html 模板文件！请确保当前目录下有 index.html")
     exit(1)
 
 with open("index.html", "r", encoding="utf-8") as f:
     template_content = f.read()
 
-# 移除模板中可能残留的 {{REGION_LINKS}} 占位符，以便定制区分主页和子页
+# 移除模板中可能残留的 {{REGION_LINKS}} 占位符
 base_template = template_content.replace("{{REGION_LINKS}}", "")
 
 # 3. 制作【主页】专属的 100 个地区完整链接 HTML
@@ -69,18 +69,16 @@ if "</main>" in home_content:
 else:
     home_content += home_section
 
-# 临时覆盖根目录 index.html（或者保持原样，视需求而定。这里我们让根目录拥有 100 个链接）
-# 注意：如果您想保留干净的根目录模板，可以将其写入一个专门的文件。这里直接更新根目录：
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(home_content)
 
-# 4. 循环创建 100 个子地区文件夹，每个子页面只放 5 个推荐链接
+# 4. 循环创建 100 个子地区文件夹，每个子页面只放 5 个循环推荐链接
 total_regions = len(regions)
 for i, region in enumerate(regions):
     os.makedirs(region, exist_ok=True)
     region_title = region.replace("-", " ").title() + ", Penang"
     
-    # 每个子页面只取 5 个循环推荐链接
+    # 每个子页面通过算法取 5 个循环推荐链接
     related_indices = [(i + step) % total_regions for step in range(1, 6)]
     sub_links_html = '<div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">\n'
     for idx in related_indices:
@@ -120,4 +118,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("主页包含 100 个链接、子页面精简为 5 个关联链接，sitemap.xml 生成完毕！")
+print("🎉 恭喜！主页 100 个链接、100 个子页面（各 5 个循环推荐链接）以及 sitemap.xml 全部生成完毕！")
