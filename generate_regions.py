@@ -45,8 +45,8 @@ with open("index.html", "r", encoding="utf-8") as f:
 # 移除模板中可能残留的 {{REGION_LINKS}} 占位符
 base_template = template_content.replace("{{REGION_LINKS}}", "")
 
-# 3. 制作【主页】专属的 100 个地区完整链接 HTML
-all_links_html = '<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2 mt-3">\n'
+# 3. 制作【主页】专属的 100 个地区完整链接 HTML（默认隐藏在折叠面板内）
+all_links_html = '<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2">\n'
 for region in regions:
     r_name = region.replace("-", " ").title()
     all_links_html += f'    <div class="col"><a href="{domain}/{region}/" class="btn btn-sm btn-outline-secondary w-100 text-truncate">{r_name}</a></div>\n'
@@ -56,13 +56,22 @@ home_section = f'''
 <section class="py-5 bg-light border-top">
     <div class="container text-center">
         <h4 class="fw-bold mb-3 text-dark">Serviced Areas in Penang</h4>
-        <p class="text-muted small">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
-        {all_links_html}
+        <p class="text-muted small mb-3">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
+        
+        <!-- 点击后可展开/收起的按钮 -->
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allServicedAreas" aria-expanded="false" aria-controls="allServicedAreas">
+            Show All Serviced Areas (查看所有服务地区)
+        </button>
+        
+        <!-- 默认折叠隐藏的 100 个地区链接区块 -->
+        <div class="collapse mt-3" id="allServicedAreas">
+            {all_links_html}
+        </div>
     </div>
 </section>
 '''
 
-# 写入主页 index.html (包含 100 个完整链接)
+# 写入主页 index.html
 home_content = base_template.replace("{{REGION}}", "Penang")
 if "</main>" in home_content:
     home_content = home_content.replace("</main>", f"{home_section}\n</main>")
@@ -78,7 +87,6 @@ for i, region in enumerate(regions):
     os.makedirs(region, exist_ok=True)
     region_title = region.replace("-", " ").title() + ", Penang"
     
-    # 每个子页面通过算法取 5 个循环推荐链接
     related_indices = [(i + step) % total_regions for step in range(1, 6)]
     sub_links_html = '<div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">\n'
     for idx in related_indices:
@@ -118,4 +126,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("🎉 恭喜！主页 100 个链接、100 个子页面（各 5 个循环推荐链接）以及 sitemap.xml 全部生成完毕！")
+print("🎉 主页已成功改为折叠隐藏，100个地区可通过按键展开！")
