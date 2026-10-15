@@ -81,11 +81,16 @@ else:
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(home_content)
 
-# 4. 循环创建 100 个子地区文件夹，每个子页面只放 5 个循环推荐链接
+# 4. 循环创建 100 个子地区文件夹，并为每个子页面定制专属 H2 标题
 total_regions = len(regions)
 for i, region in enumerate(regions):
     os.makedirs(region, exist_ok=True)
-    region_title = region.replace("-", " ").title() + ", Penang"
+    
+    r_title_clean = region.replace("-", " ").title()
+    region_title = r_title_clean + ", Penang"
+    
+    # 【核心定制】每个子页面的专属 H2 主标题
+    sub_h2_title = f"{r_title_clean} Partition 017-431 5233 Call"
     
     related_indices = [(i + step) % total_regions for step in range(1, 6)]
     sub_links_html = '<div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">\n'
@@ -98,13 +103,19 @@ for i, region in enumerate(regions):
     sub_section = f'''
     <section class="py-4 bg-light border-top">
         <div class="container text-center">
-            <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {region.replace("-", " ").title()}:</h6>
+            <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {r_title_clean}:</h6>
             {sub_links_html}
         </div>
     </section>
     '''
     
-    sub_page_content = base_template.replace("{{REGION}}", region_title)
+    # 针对子页面，动态替换模板中的 Expert 标题为该地区专属标题
+    sub_base_template = base_template.replace(
+        '<h2 class="fw-bold mb-3">Expert Partition Services in Penang</h2>',
+        f'<h2 class="fw-bold mb-3">{sub_h2_title}</h2>'
+    )
+    
+    sub_page_content = sub_base_template.replace("{{REGION}}", region_title)
     if "</main>" in sub_page_content:
         sub_page_content = sub_page_content.replace("</main>", f"{sub_section}\n</main>")
     else:
@@ -126,4 +137,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("🎉 主页已成功改为折叠隐藏，100个地区可通过按键展开！")
+print("🎉 主页折叠隐藏、100个子页面专属标题（带名称与电话）生成完毕！")
