@@ -2,7 +2,7 @@ import os
 
 # 1. 槟城 100 个细分地区、城镇及商业区列表
 regions = [
-    # 槟岛 (Penang Island) 主要区域与商业/住宅区
+    # 槟岛 (Penang Island) 主要区域与商业/住宅区 
     "george-town", "jelutong", "green-lane", "island-glades", "island-park",
     "ayang", "jelutong-east", "tanjung-tokong", "tanjung-bungah", "batu-ferringhi",
     "teluk-bahang", "pulau-tikus", "gurney", "burmah-road", "penang-road",
