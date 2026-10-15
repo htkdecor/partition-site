@@ -2,7 +2,7 @@ import os
 
 # 1. 槟城 100 个细分地区、城镇及商业区列表
 regions = [
-    # 槟岛 (Penang Island) 主要区域与商业/住宅区 
+    # 槟岛 (Penang Island) 主要区域与商业/住宅区
     "george-town", "jelutong", "green-lane", "island-glades", "island-park",
     "ayang", "jelutong-east", "tanjung-tokong", "tanjung-bungah", "batu-ferringhi",
     "teluk-bahang", "pulau-tikus", "gurney", "burmah-road", "penang-road",
@@ -45,43 +45,11 @@ with open("index.html", "r", encoding="utf-8") as f:
 # 移除模板中可能残留的 {{REGION_LINKS}} 占位符
 base_template = template_content.replace("{{REGION_LINKS}}", "")
 
-# 3. 制作【主页】专属的 100 个地区完整链接 HTML（默认隐藏在折叠面板内）
-all_links_html = '<div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2">\n'
-for region in regions:
-    r_name = region.replace("-", " ").title()
-    all_links_html += f'    <div class="col"><a href="{domain}/{region}/" class="btn btn-sm btn-outline-secondary w-100 text-truncate">{r_name}</a></div>\n'
-all_links_html += '</div>\n'
-
-home_section = f'''
-<section class="py-5 bg-light border-top">
-    <div class="container text-center">
-        <h4 class="fw-bold mb-3 text-dark">Serviced Areas in Penang</h4>
-        <p class="text-muted small mb-3">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
-        
-        <!-- 点击后可展开/收起的按钮 -->
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allServicedAreas" aria-expanded="false" aria-controls="allServicedAreas">
-            Show All Serviced Areas (查看所有服务地区)
-        </button>
-        
-        <!-- 默认折叠隐藏的 100 个地区链接区块 -->
-        <div class="collapse mt-3" id="allServicedAreas">
-            {all_links_html}
-        </div>
-    </div>
-</section>
-'''
-
-# 写入主页 index.html
-home_content = base_template.replace("{{REGION}}", "Penang")
-if "</main>" in home_content:
-    home_content = home_content.replace("</main>", f"{home_section}\n</main>")
-else:
-    home_content += home_section
-
+# 主页保持 index.html 原样（不作替换），直接写入
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(home_content)
+    f.write(base_template)
 
-# 4. 循环创建 100 个子地区文件夹，并为每个子页面定制专属 H2 标题
+# 4. 循环创建 100 个子地区文件夹，并为每个子页面定制专属 H1 和 H2 标题
 total_regions = len(regions)
 for i, region in enumerate(regions):
     os.makedirs(region, exist_ok=True)
@@ -89,8 +57,8 @@ for i, region in enumerate(regions):
     r_title_clean = region.replace("-", " ").title()
     region_title = r_title_clean + ", Penang"
     
-    # 【核心定制】每个子页面的专属 H2 主标题
-    sub_h2_title = f"{r_title_clean} Partition 017-431 5233 Call"
+    # 子页面专属的 H1 标题内容
+    sub_h1_title = f"{r_title_clean} Partition 017-431 5233 Call"
     
     related_indices = [(i + step) % total_regions for step in range(1, 6)]
     sub_links_html = '<div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">\n'
@@ -109,10 +77,13 @@ for i, region in enumerate(regions):
     </section>
     '''
     
-    # 针对子页面，动态替换模板中的 Expert 标题为该地区专属标题
+    # 针对子页面，动态替换模板中的 H1 和大标题，同时把 H2 改为 Expert Partition Service
     sub_base_template = base_template.replace(
+        '<h1 class="display-4 fw-bold mb-4">Office Partition in Penang</h1>',
+        f'<h1 class="display-4 fw-bold mb-4">{sub_h1_title}</h1>'
+    ).replace(
         '<h2 class="fw-bold mb-3">Expert Partition Services in Penang</h2>',
-        f'<h2 class="fw-bold mb-3">{sub_h2_title}</h2>'
+        '<h2 class="fw-bold mb-3">Expert Partition Service</h2>'
     )
     
     sub_page_content = sub_base_template.replace("{{REGION}}", region_title)
@@ -137,4 +108,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("🎉 主页折叠隐藏、100个子页面专属标题（带名称与电话）生成完毕！")
+print("🎉 子页面标题已成功更新：顶部 H1 改为地区+电话，正文 H2 改为 Expert Partition Service！")
