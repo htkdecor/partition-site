@@ -2,7 +2,6 @@ import os
 
 # 1. 槟城 100 个细分地区、城镇及商业区列表
 regions_data = [
-    # 槟岛 (Penang Island) 主要区域与商业/住宅区
     ("george-town", "George Town"),
     ("jelutong", "Jelutong"),
     ("green-lane", "Green Lane"),
@@ -40,8 +39,6 @@ regions_data = [
     ("bukit-jambul", "Bukit Jambul"),
     ("gloria-heights", "Gloria Heights"),
     ("desa-permai", "Desa Permai"),
-    
-    # 威省 (Seberang Perai) 核心城镇与工业区
     ("butterworth", "Butterworth"),
     ("perai", "Perai"),
     ("seberang-jaya", "Seberang Jaya"),
@@ -115,7 +112,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <title>Office Partition Services in {name} | HTK Decor Penang Specialist</title>
     <meta name="description" content="Looking for office partition installation in {name}, Penang? Premium glass partitions, aluminum framing & drywall solutions from RM12.00/ft². Get a free quote today!">
     
-    <!-- 关键修复：动态 Canonical 标签（完美解决 Alternate page 错误） -->
     <link rel="canonical" href="https://partition.htkdecor.com.my/{slug}/" />
 
     <meta property="og:title" content="Office Partition Services in {name} | HTK Decor">
@@ -127,7 +123,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 动态 Schema 结构化数据 -->
     <script type="application/ld+json">
     [
       {{
@@ -274,7 +269,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </div>
 
-        <!-- 仅保留周边邻近地区推荐区块，删除了大标题和折叠按钮 -->
         <section class="py-4 bg-light border-top mt-5">
             <div class="container text-center">
                 <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {name}:</h6>
@@ -300,7 +294,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-# 2. 循环生成各个地区的文件夹与 index.html
+# 2. 循环生成各个地区的文件夹与 index.html，并记录 URL
+sitemap_urls = ["  <url><loc>https://partition.htkdecor.com.my/</loc></url>"]
+
 for slug, name in regions_data:
     os.makedirs(slug, exist_ok=True)
     file_path = os.path.join(slug, "index.html")
@@ -309,5 +305,16 @@ for slug, name in regions_data:
     
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
+        
+    sitemap_urls.append(f"  <url><loc>https://partition.htkdecor.com.my/{slug}/</loc></url>")
 
-print("Successfully updated pages without the main serviced areas block!")
+# 3. 自动写出 sitemap.xml 文件
+sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+sitemap_content += "\n".join(sitemap_urls) + "\n"
+sitemap_content += '</urlset>'
+
+with open("sitemap.xml", "w", encoding="utf-8") as f:
+    f.write(sitemap_content)
+
+print("Successfully generated all region pages AND sitemap.xml!")
