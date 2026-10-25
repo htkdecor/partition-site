@@ -32,14 +32,14 @@ regions_data = [
     ("batu-maung", "Batu Maung"),
     ("teluk-kumbar", "Teluk Kumbar"),
     ("balik-pulau", "Balik Pulau"),
-    ("genting-balik-pulau", "Genting Balik Pulau"), # 修复了拼写错误
+    ("genting-balik-pulau", "Genting Balik Pulau"),
     ("titi-teras", "Titi Teras"),
     ("sungai-pinang", "Sungai Pinang"),
     ("jelutong-expressway", "Jelutong Expressway"),
     ("seberang-perai-selatan", "Seberang Perai Selatan"),
     ("bukit-jambul", "Bukit Jambul"),
     ("gloria-heights", "Gloria Heights"),
-    ("desa-permai", "Desa Permai"), # 修复了拼写错误
+    ("desa-permai", "Desa Permai"),
     
     # 威省 (Seberang Perai) 核心城镇与工业区
     ("butterworth", "Butterworth"),
@@ -53,14 +53,14 @@ regions_data = [
     ("nibong-tebal", "Nibong Tebal"),
     ("sungai-bakap", "Sungai Bakap"),
     ("kepala-batas", "Kepala Batas"),
-    ("tasek-gelugor", "Tasek Gelugor"), # 修复了拼写错误
+    ("tasek-gelugor", "Tasek Gelugor"),
     ("penaga", "Penaga"),
     ("kubang-semang", "Kubang Semang"),
     ("machang-bubok", "Machang Bubok"),
     ("permatang-pauh", "Permatang Pauh"),
     ("penanti", "Penanti"),
     ("sungai-dua-butterworth", "Sungai Dua Butterworth"),
-    ("bagan-ajam", "Bagan Ajam"), # 修复了拼写错误
+    ("bagan-ajam", "Bagan Ajam"),
     ("mak-mandin", "Mak Mandin"),
     ("raja-uda", "Raja Uda"),
     ("bagan-lallang", "Bagan Lallang"),
@@ -79,10 +79,10 @@ regions_data = [
     ("gurney-paragon", "Gurney Paragon"),
     ("gurney-plaza", "Gurney Plaza"),
     ("queensbay", "Queensbay"),
-    ("straits-quay", "Straits Quay"), # 修复了拼写错误
+    ("straits-quay", "Straits Quay"),
     ("auto-city", "Auto City"),
     ("icon-city", "Icon City"),
-    ("spice-penang", "SPICE Penang"), # 修复了拼写错误
+    ("spice-penang", "SPICE Penang"),
     ("penang-sentral", "Penang Sentral"),
     ("taman-sri-ginting", "Taman Sri Ginting"),
     ("taman-lip-sin", "Taman Lip Sin"),
@@ -273,6 +273,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 </div>
             </div>
         </div>
+
+        <!-- 周边邻近地区推荐区块 -->
+        <section class="py-4 bg-light border-top mt-5">
+            <div class="container text-center">
+                <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {name}:</h6>
+                <div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">
+                    <div class="col"><a href="https://partition.htkdecor.com.my/george-town/" class="btn btn-sm btn-outline-primary w-100 text-truncate">George Town</a></div>
+                    <div class="col"><a href="https://partition.htkdecor.com.my/jelutong/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Jelutong</a></div>
+                    <div class="col"><a href="https://partition.htkdecor.com.my/bayan-lepas/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Bayan Lepas</a></div>
+                    <div class="col"><a href="https://partition.htkdecor.com.my/butterworth/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Butterworth</a></div>
+                    <div class="col"><a href="https://partition.htkdecor.com.my/bukit-mertajam/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Bukit Mertajam</a></div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="bg-dark text-white py-4 text-center small opacity-75">
@@ -291,10 +305,9 @@ for slug, name in regions_data:
     os.makedirs(slug, exist_ok=True)
     file_path = os.path.join(slug, "index.html")
     
-    # 将 slug 和 name 动态写入模板
     content = HTML_TEMPLATE.format(slug=slug, name=name)
     
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
 
-print("Successfully generated all region pages with proper canonical tags!")
+print("Successfully generated all region pages with proper canonical tags and clean layout!")
