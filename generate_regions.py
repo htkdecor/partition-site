@@ -274,7 +274,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </div>
 
-        <!-- 周边邻近地区推荐区块 -->
+        <!-- 仅保留周边邻近地区推荐区块，删除了大标题和折叠按钮 -->
         <section class="py-4 bg-light border-top mt-5">
             <div class="container text-center">
                 <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas Near {name}:</h6>
@@ -310,4 +310,4 @@ for slug, name in regions_data:
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
 
-print("Successfully generated all region pages with proper canonical tags and clean layout!")
+print("Successfully updated pages without the main serviced areas block!")
