@@ -109,7 +109,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Partition Services in {name} | HTK Decor Penang Specialist</title>
+    <title> {name} Partition 017-431 5233 CALL HTK</title>
     <meta name="description" content="Looking for office partition installation in {name}, Penang? Premium glass partitions, aluminum framing & drywall solutions from RM12.00/ft². Get a free quote today!">
     
     <link rel="canonical" href="https://partition.htkdecor.com.my/{slug}/" />
