@@ -109,12 +109,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {name} Partition 017-431 5233 CALL HTK</title>
+    <title>{name} Partition 017-431 5233 CALL HTK</title>
     <meta name="description" content="Looking for office partition installation in {name}, Penang? Premium glass partitions, aluminum framing & drywall solutions from RM12.00/ft². Get a free quote today!">
     
     <link rel="canonical" href="https://partition.htkdecor.com.my/{slug}/" />
 
-    <meta property="og:title" content="Office Partition Services in {name} | HTK Decor">
+    <meta property="og:title" content="{name} Partition 017-431 5233 CALL HTK">
     <meta property="og:description" content="Professional glass & office partition specialist serving {name}, Penang. Prices start from RM12.00/ft².">
     <meta property="og:url" content="https://partition.htkdecor.com.my/{slug}/">
     <meta property="og:type" content="website">
@@ -317,4 +317,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("Successfully generated all region pages AND sitemap.xml!")
+print("Successfully updated titles and generated all region pages AND sitemap.xml!")
