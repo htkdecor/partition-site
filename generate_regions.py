@@ -1,27 +1,19 @@
 import os
 import urllib.parse
 
-# 1. 槟城 100 个细分地区、城镇及商业区列表
+# 1. 精简后的有效地区列表（对应你实际拥有的文件夹）
 regions_data = [
     ("george-town", "George Town"),
     ("jelutong", "Jelutong"),
     ("green-lane", "Green Lane"),
-    ("island-glades", "Island Glades"),
-    ("island-park", "Island Park"),
     ("air-itam", "Air Itam"),
-    ("jelutong-east", "Jelutong East"),
     ("tanjung-tokong", "Tanjung Tokong"),
     ("tanjung-bungah", "Tanjung Bungah"),
     ("batu-ferringhi", "Batu Ferringhi"),
     ("teluk-bahang", "Teluk Bahang"),
     ("pulau-tikus", "Pulau Tikus"),
     ("gurney", "Gurney"),
-    ("burmah-road", "Burmah Road"),
-    ("penang-road", "Penang Road"),
-    ("chulia-street", "Chulia Street"),
     ("komtar", "Komtar"),
-    ("armenia-street", "Armenia Street"),
-    ("padang-kota", "Padang Kota"),
     ("paya-terubong", "Paya Terubong"),
     ("farlim", "Farlim"),
     ("relau", "Relau"),
@@ -32,13 +24,8 @@ regions_data = [
     ("batu-maung", "Batu Maung"),
     ("teluk-kumbar", "Teluk Kumbar"),
     ("balik-pulau", "Balik Pulau"),
-    ("genting-balik-pulau", "Genting Balik Pulau"),
-    ("titi-teras", "Titi Teras"),
     ("sungai-pinang", "Sungai Pinang"),
-    ("jelutong-expressway", "Jelutong Expressway"),
-    ("seberang-perai-selatan", "Seberang Perai Selatan"),
     ("bukit-jambul", "Bukit Jambul"),
-    ("gloria-heights", "Gloria Heights"),
     ("desa-permai", "Desa Permai"),
     ("butterworth", "Butterworth"),
     ("perai", "Perai"),
@@ -57,54 +44,20 @@ regions_data = [
     ("machang-bubok", "Machang Bubok"),
     ("permatang-pauh", "Permatang Pauh"),
     ("penanti", "Penanti"),
-    ("sungai-dua-butterworth", "Sungai Dua Butterworth"),
     ("bagan-ajam", "Bagan Ajam"),
     ("mak-mandin", "Mak Mandin"),
     ("raja-uda", "Raja Uda"),
-    ("bagan-lallang", "Bagan Lallang"),
-    ("bagan-dalam", "Bagan Dalam"),
-    ("perai-industrial-estate", "Perai Industrial Estate"),
-    ("juru-auto-city", "Juru Auto City"),
-    ("bayan-lepas-free-industrial-zone", "Bayan Lepas Free Industrial Zone"),
-    ("phase-1-bayan-lepas", "Phase 1 Bayan Lepas"),
-    ("phase-2-bayan-lepas", "Phase 2 Bayan Lepas"),
-    ("phase-3-bayan-lepas", "Phase 3 Bayan Lepas"),
-    ("batu-kawan-industrial-park", "Batu Kawan Industrial Park"),
-    ("penang-science-park", "Penang Science Park"),
-    ("bukit-minyak-industrial-park", "Bukit Minyak Industrial Park"),
-    ("mak-mandin-industrial-estate", "Mak Mandin Industrial Estate"),
-    ("bagan-luar", "Bagan Luar"),
-    ("gurney-paragon", "Gurney Paragon"),
+    ("bagan-lalang", "Bagan Lalang"),
+    ("bukit-minyak", "Bukit Minyak"),
     ("gurney-plaza", "Gurney Plaza"),
-    ("queensbay", "Queensbay"),
     ("straits-quay", "Straits Quay"),
     ("auto-city", "Auto City"),
     ("icon-city", "Icon City"),
-    ("spice-penang", "SPICE Penang"),
-    ("penang-sentral", "Penang Sentral"),
-    ("taman-sri-ginting", "Taman Sri Ginting"),
     ("taman-lip-sin", "Taman Lip Sin"),
-    ("taman-bayan", "Taman Bayan"),
-    ("taman-kheng-kooi", "Taman Kheng Kooi"),
-    ("taman-wee-hee-toy", "Taman Wee Hee Toy"),
-    ("desa-krystal", "Desa Krystal"),
-    ("desa-indah", "Desa Indah"),
-    ("sungai-nibong", "Sungai Nibong"),
-    ("taman-sri-nibong", "Taman Sri Nibong"),
-    ("taman-pelangi", "Taman Pelangi"),
-    ("taman-century", "Taman Century"),
-    ("taman-bukit-mertajam", "Taman Bukit Mertajam"),
-    ("taman-indah", "Taman Indah"),
-    ("taman-permai", "Taman Permai"),
-    ("taman-sejahtera", "Taman Sejahtera"),
-    ("taman-jaya", "Taman Jaya"),
-    ("taman-meru", "Taman Meru"),
-    ("taman-seri-maju", "Taman Seri Maju"),
-    ("taman-sentosa", "Taman Sentosa"),
-    ("taman-mutiara", "Taman Mutiara")
+    ("sungai-nibong", "Sungai Nibong")
 ]
 
-# 高级 SEO HTML 模板（已加入手机端底部悬浮栏及防溢出样式）
+# 高级 SEO HTML 模板
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -308,14 +261,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-# 2. 循环生成各个地区的文件夹与 index.html，并记录 URL
+# 2. 循环生成各个地区的文件夹与 index.html
 sitemap_urls = ["  <url><loc>https://partition.htkdecor.com.my/</loc></url>"]
 
 for slug, name in regions_data:
     os.makedirs(slug, exist_ok=True)
     file_path = os.path.join(slug, "index.html")
     
-    # 自动对 WhatsApp 预设文案进行 URL 编码（防止空格和特殊字符导致链接断开）
     wa_message = f"Hi, I need office partition service in {name}"
     wa_text_encoded = urllib.parse.quote(wa_message)
     
@@ -326,7 +278,7 @@ for slug, name in regions_data:
         
     sitemap_urls.append(f"  <url><loc>https://partition.htkdecor.com.my/{slug}/</loc></url>")
 
-# 3. 自动写出 sitemap.xml 文件
+# 3. 自动写出绝对匹配的 sitemap.xml 文件
 sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
 sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 sitemap_content += "\n".join(sitemap_urls) + "\n"
@@ -335,4 +287,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print("Successfully updated main headings, generated all 100 region files, and created sitemap.xml!")
+print(f"成功生成了 {len(regions_data)} 个地区页面并更新了精准的 sitemap.xml！")
