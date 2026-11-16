@@ -1,7 +1,7 @@
 import os
 import urllib.parse
 
-# 1. 精简后的有效地区列表（对应你实际拥有的文件夹）
+# 1. 对应你仓库中实际拥有的 52 个有效地区列表
 regions_data = [
     ("george-town", "George Town"),
     ("jelutong", "Jelutong"),
@@ -57,7 +57,7 @@ regions_data = [
     ("sungai-nibong", "Sungai Nibong")
 ]
 
-# 高级 SEO HTML 模板
+# 2. 高级 SEO HTML 模板（底部加入了动态折叠网格区块 {areas_html}）
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -225,15 +225,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </div>
 
-        <section class="py-4 bg-light border-top mt-5">
+        <!-- 动态折叠的所有服务地区网格 -->
+        <section class="py-5 bg-light border-top mt-5">
             <div class="container text-center">
-                <h6 class="fw-bold mb-2 text-dark">Other Serviced Areas in Penang:</h6>
-                <div class="row row-cols-2 row-cols-md-5 g-2 mt-3 justify-content-center">
-                    <div class="col"><a href="https://partition.htkdecor.com.my/george-town/" class="btn btn-sm btn-outline-primary w-100 text-truncate">George Town</a></div>
-                    <div class="col"><a href="https://partition.htkdecor.com.my/jelutong/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Jelutong</a></div>
-                    <div class="col"><a href="https://partition.htkdecor.com.my/bayan-lepas/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Bayan Lepas</a></div>
-                    <div class="col"><a href="https://partition.htkdecor.com.my/butterworth/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Butterworth</a></div>
-                    <div class="col"><a href="https://partition.htkdecor.com.my/bukit-mertajam/" class="btn btn-sm btn-outline-primary w-100 text-truncate">Bukit Mertajam</a></div>
+                <h4 class="fw-bold mb-3 text-dark">Serviced Areas in Penang</h4>
+                <p class="text-muted small mb-3">We provide professional office partition services across all major districts and industrial parks in Penang:</p>
+                
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allServicedAreas" aria-expanded="false" aria-controls="allServicedAreas">
+                    Show All Serviced Areas (查看所有服务地区)
+                </button>
+                
+                <div class="collapse mt-3" id="allServicedAreas">
+                    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-2">
+                        {areas_html}
+                    </div>
                 </div>
             </div>
         </section>
@@ -261,7 +266,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-# 2. 循环生成各个地区的文件夹与 index.html
+# 3. 自动生成所有地区卡片的 HTML 片段
+areas_html_list = []
+for s, n in regions_data:
+    # 如果是当前页面对应的地区，可以用不同颜色（如 btn-primary）高亮，其余用 btn-outline-secondary
+    areas_html_list.append(
+        f'    <div class="col"><a href="https://partition.htkdecor.com.my/{s}/" class="btn btn-sm btn-outline-secondary w-100 text-truncate">{n}</a></div>'
+    )
+combined_areas_html = "\n".join(areas_html_list)
+
+# 4. 循环生成各个地区的文件夹与 index.html，并记录 URL
 sitemap_urls = ["  <url><loc>https://partition.htkdecor.com.my/</loc></url>"]
 
 for slug, name in regions_data:
@@ -271,14 +285,20 @@ for slug, name in regions_data:
     wa_message = f"Hi, I need office partition service in {name}"
     wa_text_encoded = urllib.parse.quote(wa_message)
     
-    content = HTML_TEMPLATE.format(slug=slug, name=name, wa_text=wa_text_encoded)
+    # 填充模板内容（同时传入动态生成的地区网格 HTML）
+    content = HTML_TEMPLATE.format(
+        slug=slug, 
+        name=name, 
+        wa_text=wa_text_encoded,
+        areas_html=combined_areas_html
+    )
     
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
         
     sitemap_urls.append(f"  <url><loc>https://partition.htkdecor.com.my/{slug}/</loc></url>")
 
-# 3. 自动写出绝对匹配的 sitemap.xml 文件
+# 5. 自动写出绝对匹配的 sitemap.xml 文件
 sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
 sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 sitemap_content += "\n".join(sitemap_urls) + "\n"
@@ -287,4 +307,4 @@ sitemap_content += '</urlset>'
 with open("sitemap.xml", "w", encoding="utf-8") as f:
     f.write(sitemap_content)
 
-print(f"成功生成了 {len(regions_data)} 个地区页面并更新了精准的 sitemap.xml！")
+print(f"成功生成了 {len(regions_data)} 个带有完整折叠地区矩阵的子页面，并更新了对应的 sitemap.xml！")
